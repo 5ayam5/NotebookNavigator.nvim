@@ -106,6 +106,9 @@ M.run_cell = function(cell_marker, repl_provider, repl_args)
   return repl(cell_object.from.line, cell_object.to.line, repl_args, cell_marker)
 end
 
+--- Return `true` if success and moved to an existing cell
+--- Return `false` if moved to a new cell
+--- Return `nil` if failed to run cell
 M.run_and_move = function(cell_marker, repl_provider, repl_args)
   local success = M.run_cell(cell_marker, repl_provider, repl_args)
 
@@ -117,23 +120,11 @@ M.run_and_move = function(cell_marker, repl_provider, repl_args)
       vim.api.nvim_buf_set_lines(0, -1, -1, false, { cell_marker, "" })
       -- and move to it
       M.move_cell("d", cell_marker)
+      return false
     end
+    return true
   end
-end
-
-M.run_all_cells = function(repl_provider, repl_args)
-  local buf_length = vim.api.nvim_buf_line_count(0)
-
-  local repl = get_repl(repl_provider)
-  repl(1, buf_length, repl_args)
-end
-
-M.run_cells_below = function(cell_marker, repl_provider, repl_args)
-  local buf_length = vim.api.nvim_buf_line_count(0)
-  local cell_object = miniai_spec("i", cell_marker)
-
-  local repl = get_repl(repl_provider)
-  repl(cell_object.from.line, buf_length, repl_args)
+  return nil
 end
 
 M.merge_cell = function(dir, cell_marker)

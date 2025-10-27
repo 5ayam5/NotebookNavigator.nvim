@@ -107,14 +107,19 @@ end
 ---
 ---@param repl_args table|nil Optional config for the repl.
 M.run_all_cells = function(repl_args)
-  core.run_all_cells(M.config.repl_provider, repl_args)
+  -- find the first cell marker and then run all cells below
+  vim.api.nvim_win_set_cursor(0, { 1, 0 })
+  core.move_cell("d", cell_marker())
+
+  M.run_cells_below(repl_args)
 end
 
 --- Run all cells below (including current cell)
 ---
 ---@param repl_args table|nil Optional config for the repl.
 M.run_cells_below = function(repl_args)
-  core.run_cells_below(cell_marker(), M.config.repl_provider, repl_args)
+  while core.run_and_move(cell_marker(), M.config.repl_provider, repl_args) do
+  end
 end
 
 --- Comment all the contents of the cell under the cursor
