@@ -47,7 +47,7 @@ repls.molten = function(start_line, end_line, repl_args, cell_marker)
   local line_count = vim.api.nvim_buf_line_count(0)
 
   if line_count < (end_line + 1) then
-    vim.api.nvim_buf_set_lines(0, end_line + 1, end_line + 1, false, { cell_marker })
+    vim.api.nvim_buf_set_lines(0, end_line + 1, end_line + 1, false, { "", cell_marker })
   end
 
   local ok, _ = pcall(vim.fn.MoltenEvaluateRange, start_line, end_line)
@@ -60,7 +60,7 @@ repls.molten = function(start_line, end_line, repl_args, cell_marker)
 end
 
 -- no repl
-repls.no_repl = function(_) end
+repls.no_repl = function(_, _, _, _) end
 
 local get_repl = function(repl_provider)
   local available_repls = utils.available_repls
